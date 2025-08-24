@@ -1,0 +1,29 @@
+# Dependencies
+# ---------------------------------
+node_modules/
+venv/
+
+# Secrets (ALWAYS ignore)
+# ---------------------------------
+.env
+*.pem
+credentials.json
+
+# Compiled Code & Caching
+# ---------------------------------
+__pycache__/
+*.pyc
+/build/
+/dist/
+
+# Logs and Databases
+# ---------------------------------
+*.log
+*.sqlite3
+
+# OS & Editor Specific
+# ---------------------------------
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
