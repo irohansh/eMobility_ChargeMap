@@ -17,6 +17,11 @@ build/
 dist/
 out/
 
+# Frontend build outputs
+frontend/dist/
+frontend/build/
+frontend/out/
+
 # Logs
 logs
 *.log
@@ -52,6 +57,13 @@ coverage/
 # Cache directories
 .cache
 .parcel-cache
+
+# Frontend cache and temp files
+frontend/.vite/
+frontend/.cache/
+frontend/.temp/
+frontend/.next/
+frontend/.nuxt/
 
 # Database files
 *.db
@@ -97,3 +109,45 @@ Desktop.ini
 # Lock files (keep package-lock.json)
 yarn.lock
 pnpm-lock.yaml
+
+# Frontend specific files
+frontend/node_modules/
+frontend/package-lock.json
+frontend/yarn.lock
+frontend/pnpm-lock.yaml
+frontend/.env
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+
+# Frontend logs
+frontend/logs/
+frontend/*.log
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+# Frontend coverage
+frontend/coverage/
+frontend/*.lcov
+
+# Frontend TypeScript
+frontend/*.tsbuildinfo
+
+# Frontend IDE files
+frontend/.vscode/
+frontend/.idea/
+frontend/*.swp
+frontend/*.swo
+frontend/*~
+
+# Frontend OS files
+frontend/.DS_Store
+frontend/.DS_Store?
+frontend/._*
+frontend/.Spotlight-V100
+frontend/.Trashes
+frontend/ehthumbs.db
+frontend/Thumbs.db
+frontend/Desktop.ini
