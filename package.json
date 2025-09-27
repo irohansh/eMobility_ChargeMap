@@ -1,21 +1,24 @@
 {
-  "name": "ev-charging-backend",
+  "name": "chargemap-backend",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
     "start": "nodemon src/app.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["ev-charging", "chargemap", "electric-vehicles", "charging-stations"],
+  "author": "ChargeMap Team",
   "license": "ISC",
-  "description": "",
+  "description": "ChargeMap - EV Charging Station Management Backend",
   "dependencies": {
     "@googlemaps/google-maps-services-js": "^3.4.2",
     "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.17.0"
+    "mongoose": "^8.17.0",
+    "nodemailer": "^7.0.6",
+    "zod": "^4.1.11"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"

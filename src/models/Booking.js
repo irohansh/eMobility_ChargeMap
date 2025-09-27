@@ -10,12 +10,9 @@ const BookingSchema = new mongoose.Schema({
     status: { type: String, enum: ['confirmed', 'cancelled', 'completed'], default: 'confirmed' },
 }, { timestamps: true });
 
-// To ensure a charger cannot be booked twice for the same time slot.
-// This is a partial filter index: it only applies the uniqueness constraint to documents that are 'confirmed'.
 BookingSchema.index({ chargerId: 1, startTime: 1, status: 1 }, {
   unique: true,
   partialFilterExpression: { status: 'confirmed' }
 });
-
 
 module.exports = mongoose.model('Booking', BookingSchema);

@@ -2,9 +2,6 @@ const Station = require('../models/Station');
 const MapService = require('../services/mapService');
 const Booking = require('../models/Booking');
 
-// @route   POST api/stations/seed
-// @desc    Create dummy stations for testing
-// @access  Public (for development only)
 exports.seedStations = async (req, res) => {
     try {
         await Station.deleteMany({});
@@ -12,7 +9,7 @@ exports.seedStations = async (req, res) => {
             {
                 name: "Mambakkam Central Charge",
                 address: "123, Vandalur-Kelambakkam Road, Mambakkam, Chennai",
-                location: { type: "Point", coordinates: [80.2244, 12.8355] }, // [lng, lat]
+                location: { type: "Point", coordinates: [80.2244, 12.8355] },
                 chargers: [
                     { connectorType: "Type 2", powerKW: 22, status: "available" },
                     { connectorType: "CCS", powerKW: 50, status: "available" }
@@ -37,9 +34,6 @@ exports.seedStations = async (req, res) => {
     }
 };
 
-// @route   GET api/stations
-// @desc    Get all stations
-// @access  Public
 exports.getAllStations = async (req, res) => {
     try {
         const stations = await Station.find();
@@ -50,9 +44,6 @@ exports.getAllStations = async (req, res) => {
     }
 };
 
-// @route   GET api/stations/:id
-// @desc    Get station by ID
-// @access  Public
 exports.getStationById = async (req, res) => {
     try {
         const station = await Station.findById(req.params.id);
@@ -64,11 +55,8 @@ exports.getStationById = async (req, res) => {
     }
 };
 
-// @route   GET api/stations/:id/route
-// @desc    Get route to station
-// @access  Public
 exports.getStationRoute = async (req, res) => {
-    const { origin } = req.query; // format: "lat,lng"
+    const { origin } = req.query;
     if (!origin) return res.status(400).json({ msg: "Origin query parameter is required." });
 
     try {
@@ -84,11 +72,8 @@ exports.getStationRoute = async (req, res) => {
     }
 };
 
-// @route   POST api/stations/recommendations
-// @desc    Get smart station recommendations
-// @access  Public
 exports.getRecommendations = async (req, res) => {
-    const { currentLocation, carRange } = req.body; // carRange in km
+    const { currentLocation, carRange } = req.body;
     const { lat, lon } = currentLocation;
 
     try {
@@ -96,13 +81,11 @@ exports.getRecommendations = async (req, res) => {
             location: {
                 $nearSphere: {
                     $geometry: { type: "Point", coordinates: [lon, lat] },
-                    $maxDistance: carRange * 1000 // convert km to meters
+                    $maxDistance: carRange * 1000
                 }
             }
         });
 
-        // In a real app, this would involve a more complex scoring algorithm
-        // based on power, occupancy, etc. For now, we return the nearest.
         res.json(stations);
 
     } catch (err) {
@@ -111,12 +94,9 @@ exports.getRecommendations = async (req, res) => {
     }
 };
 
-// @route   GET /api/stations/:stationId/slots
-// @desc    View available slots by station & date
-// @access  Public
 exports.getAvailableSlots = async (req, res) => {
     try {
-        const { date } = req.query; // date in YYYY-MM-DD format
+        const { date } = req.query;
         if (!date) return res.status(400).json({ msg: 'Date query parameter is required' });
 
         const startOfDay = new Date(date);
@@ -145,7 +125,6 @@ exports.getAvailableSlots = async (req, res) => {
                 .filter(b => b.chargerId.toString() === chargerIdStr)
                 .map(b => ({ start: b.startTime.getTime(), end: b.endTime.getTime() }));
 
-            // Generate 1-hour slots from 00:00 to 23:00
             for (let hour = 0; hour < 24; hour++) {
                 const slotStart = new Date(date);
                 slotStart.setHours(hour, 0, 0, 0);

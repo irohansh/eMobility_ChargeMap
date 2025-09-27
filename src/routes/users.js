@@ -4,5 +4,6 @@ const userController = require('../controllers/userController');
 const auth = require('../middleware/authMiddleware');
 
 router.get('/me/bookings', auth, userController.getMyBookings);
+router.put('/me/profile', auth, userController.updateProfile);
 
 module.exports = router;

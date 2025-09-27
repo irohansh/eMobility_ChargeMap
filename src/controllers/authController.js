@@ -1,11 +1,9 @@
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { sendWelcomeEmail } = require('../services/emailService');
 require('dotenv').config();
 
-// @route   POST api/auth/register
-// @desc    Register a user
-// @access  Public
 exports.register = async (req, res) => {
     const { name, email, password, phone } = req.body;
     try {
@@ -18,10 +16,22 @@ exports.register = async (req, res) => {
         user.password = await bcrypt.hash(password, salt);
         await user.save();
 
+        sendWelcomeEmail(email, name).catch(err => {
+            console.error('Failed to send welcome email:', err);
+        });
+
         const payload = { user: { id: user.id } };
         jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '5h' }, (err, token) => {
             if (err) throw err;
-            res.json({ token });
+            res.json({ 
+                token,
+                user: {
+                    id: user.id,
+                    name: user.name,
+                    email: user.email,
+                    phone: user.phone
+                }
+            });
         });
     } catch (err) {
         console.error(err.message);
@@ -29,9 +39,6 @@ exports.register = async (req, res) => {
     }
 };
 
-// @route   POST api/auth/login
-// @desc    Authenticate user & get token
-// @access  Public
 exports.login = async (req, res) => {
     const { email, password } = req.body;
     try {
@@ -47,7 +54,15 @@ exports.login = async (req, res) => {
         const payload = { user: { id: user.id } };
         jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '5h' }, (err, token) => {
             if (err) throw err;
-            res.json({ token });
+            res.json({ 
+                token,
+                user: {
+                    id: user.id,
+                    name: user.name,
+                    email: user.email,
+                    phone: user.phone
+                }
+            });
         });
     } catch (err) {
         console.error(err.message);

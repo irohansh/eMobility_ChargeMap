@@ -2,20 +2,16 @@ const Booking = require('../models/Booking');
 const Station = require('../models/Station');
 const User = require('../models/User');
 const NotificationService = require('../services/notificationService');
+const { sendBookingConfirmationEmail } = require('../services/emailService');
 
-// @route   POST api/bookings
-// @desc    Book a charging slot
-// @access  Private
 exports.createBooking = async (req, res) => {
     const { stationId, chargerId, startTime, vehicleInfo } = req.body;
     const userId = req.user.id;
 
     try {
-        // Assume all slots are 1 hour for simplicity
         const start = new Date(startTime);
         const end = new Date(start.getTime() + 60 * 60 * 1000);
 
-        // 1. Check for overlapping bookings (This is the critical part)
         const existingBooking = await Booking.findOne({
             chargerId: chargerId,
             status: 'confirmed',
@@ -29,7 +25,6 @@ exports.createBooking = async (req, res) => {
             return res.status(409).json({ msg: 'Slot is already booked for this time.' });
         }
 
-        // 2. Create and save the new booking
         const booking = new Booking({
             user: userId,
             station: stationId,
@@ -40,8 +35,21 @@ exports.createBooking = async (req, res) => {
         });
         await booking.save();
 
-        // 3. Trigger a mock notification
+        const station = await Station.findById(stationId);
         const user = await User.findById(userId);
+        
+        if (station && user) {
+            sendBookingConfirmationEmail(user.email, user.name, {
+                stationName: station.name,
+                address: station.address,
+                startTime: booking.startTime,
+                endTime: booking.endTime,
+                vehicleInfo: booking.vehicleInfo
+            }).catch(err => {
+                console.error('Failed to send booking confirmation email:', err);
+            });
+        }
+
         NotificationService.trigger('BOOKING_CONFIRMED', {
             bookingId: booking.id,
             userEmail: user.email,
@@ -52,22 +60,18 @@ exports.createBooking = async (req, res) => {
         res.status(201).json(booking);
     } catch (err) {
         console.error(err.message);
-        if (err.code === 11000) { // Duplicate key error from the index
+        if (err.code === 11000) {
             return res.status(409).json({ msg: 'Slot is already booked for this time (index conflict).' });
         }
         res.status(500).send('Server Error');
     }
 };
 
-// @route   DELETE api/bookings/:id
-// @desc    Cancel a booking
-// @access  Private
 exports.cancelBooking = async (req, res) => {
     try {
         let booking = await Booking.findById(req.params.id);
         if (!booking) return res.status(404).json({ msg: 'Booking not found' });
 
-        // Check if the user owns the booking
         if (booking.user.toString() !== req.user.id) {
             return res.status(401).json({ msg: 'User not authorized' });
         }
@@ -75,7 +79,6 @@ exports.cancelBooking = async (req, res) => {
         booking.status = 'cancelled';
         await booking.save();
 
-        // Trigger mock notification
         const user = await User.findById(req.user.id);
         NotificationService.trigger('BOOKING_CANCELLED', {
             bookingId: booking.id,
@@ -89,10 +92,6 @@ exports.cancelBooking = async (req, res) => {
     }
 };
 
-
-// @route   POST api/bookings/:id/complete
-// @desc    Mark a booking as complete (for testing reviews)
-// @access  Private
 exports.completeBooking = async (req, res) => {
     try {
         let booking = await Booking.findById(req.params.id);

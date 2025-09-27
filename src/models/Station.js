@@ -1,9 +1,8 @@
 const mongoose = require('mongoose');
 
-// GeoJSON Schema for location data
 const PointSchema = new mongoose.Schema({
   type: { type: String, enum: ['Point'], required: true },
-  coordinates: { type: [Number], required: true } // Format: [longitude, latitude]
+  coordinates: { type: [Number], required: true }
 });
 
 const StationSchema = new mongoose.Schema({
@@ -13,7 +12,6 @@ const StationSchema = new mongoose.Schema({
     chargers: [{
         connectorType: { type: String, enum: ['Type 2', 'CCS', 'CHAdeMO'], required: true },
         powerKW: { type: Number, required: true },
-        // This status is a general indicator, real-time availability is checked via bookings
         status: { type: String, enum: ['available', 'occupied', 'out-of-order'], default: 'available' }
     }]
 });
