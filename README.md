@@ -1,6 +1,6 @@
 # <div align="center">eMobility ChargeMap</div>
 
-#<div align="centre">
+<div align="centre">
    [![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
    [![React](https://img.shields.io/badge/React-18+-blue.svg)](https://reactjs.org/)
    [![MongoDB](https://img.shields.io/badge/MongoDB-7+-green.svg)](https://www.mongodb.com/)
