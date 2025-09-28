@@ -1,5 +1,14 @@
 # <div align="center">eMobility ChargeMap</div>
 
+<div align="centre">
+   [![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
+   [![React](https://img.shields.io/badge/React-18+-blue.svg)](https://reactjs.org/)
+   [![MongoDB](https://img.shields.io/badge/MongoDB-7+-green.svg)](https://www.mongodb.com/)
+   [![TypeScript](https://img.shields.io/badge/TypeScript-5+-blue.svg)](https://www.typescriptlang.org/)
+   [![License](https://img.shields.io/badge/License-ISC-yellow.svg)](LICENSE)
+   [![Status](https://img.shields.io/badge/Status-Active-brightgreen.svg)](https://github.com/your-org/chargemap)
+</div>
+
 [![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
 [![React](https://img.shields.io/badge/React-18+-blue.svg)](https://reactjs.org/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-7+-green.svg)](https://www.mongodb.com/)
