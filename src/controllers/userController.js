@@ -8,7 +8,7 @@ exports.getMyBookings = async (req, res) => {
                 status: 'confirmed',
                 startTime: { $gte: new Date() }
             })
-            .populate('station', ['name', 'address'])
+            .populate('station')
             .sort({ startTime: 1 });
 
         res.json(bookings);

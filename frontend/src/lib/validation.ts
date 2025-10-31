@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-// User validation schemas
 export const registerSchema = z.object({
   name: z.string()
     .min(2, 'Name must be at least 2 characters')
@@ -26,7 +25,6 @@ export const loginSchema = z.object({
     .min(1, 'Password is required')
 });
 
-// Booking validation schemas
 export const createBookingSchema = z.object({
   stationId: z.string()
     .min(1, 'Station ID is required'),
@@ -44,17 +42,14 @@ export const createBookingSchema = z.object({
   const endTime = new Date(data.endTime);
   const now = new Date();
   
-  // Check if start time is in the future
   if (startTime <= now) {
     return false;
   }
   
-  // Check if end time is after start time
   if (endTime <= startTime) {
     return false;
   }
   
-  // Check if booking duration is reasonable (max 8 hours)
   const durationHours = (endTime.getTime() - startTime.getTime()) / (1000 * 60 * 60);
   if (durationHours > 8) {
     return false;
@@ -65,7 +60,6 @@ export const createBookingSchema = z.object({
   message: "Invalid booking time: start time must be in the future, end time must be after start time, and duration must be less than 8 hours"
 });
 
-// Review validation schemas
 export const createReviewSchema = z.object({
   stationId: z.string()
     .min(1, 'Station ID is required'),
@@ -83,7 +77,6 @@ export const createReviewSchema = z.object({
     .optional()
 });
 
-// Type exports
 export type RegisterFormData = z.infer<typeof registerSchema>;
 export type LoginFormData = z.infer<typeof loginSchema>;
 export type CreateBookingFormData = z.infer<typeof createBookingSchema>;

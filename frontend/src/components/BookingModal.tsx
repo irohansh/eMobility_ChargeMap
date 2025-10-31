@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -44,6 +44,21 @@ const BookingModal: React.FC<BookingModalProps> = ({
   const { toast } = useToast();
   const { isAuthenticated } = useAuth();
 
+  useEffect(() => {
+    if (isOpen) {
+      const now = new Date();
+      now.setMinutes(now.getMinutes() + 30);
+      const defaultStart = now.toISOString().slice(0, 16);
+      
+      const endDate = new Date(now);
+      endDate.setHours(endDate.getHours() + 1);
+      const defaultEnd = endDate.toISOString().slice(0, 16);
+      
+      setStartTime(defaultStart);
+      setEndTime(defaultEnd);
+    }
+  }, [isOpen]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -76,14 +91,13 @@ const BookingModal: React.FC<BookingModalProps> = ({
       });
 
       toast({
-        title: "Booking Created",
-        description: "Your charging session has been booked successfully!",
+        title: "Booking Created Successfully",
+        description: "Your charging session has been booked! A confirmation email has been sent to your registered email address.",
       });
 
       onBookingCreated();
       onClose();
       
-      // Reset form
       setSelectedCharger("");
       setStartTime("");
       setEndTime("");

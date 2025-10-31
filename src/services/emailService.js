@@ -131,7 +131,59 @@ const sendBookingConfirmationEmail = async (userEmail, userName, bookingDetails)
     }
 };
 
+const sendPaymentConfirmationEmail = async (userEmail, userName, paymentDetails) => {
+    try {
+        const transporter = createTransporter();
+        
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: userEmail,
+            subject: 'Payment Confirmed - ChargeMap',
+            html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center; color: white;">
+                        <h1 style="margin: 0; font-size: 28px;">ChargeMap</h1>
+                        <p style="margin: 10px 0 0 0; font-size: 16px;">Payment Confirmed</p>
+                    </div>
+                    
+                    <div style="padding: 30px; background-color: #f8f9fa;">
+                        <h2 style="color: #333; margin-bottom: 20px;">Hello ${userName}! ✅</h2>
+                        
+                        <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">
+                            Your payment has been successfully processed. Your charging session is now confirmed.
+                        </p>
+                        
+                        <div style="background-color: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #28a745;">
+                            <h3 style="color: #333; margin-top: 0;">Payment Details:</h3>
+                            <p style="color: #666; margin: 5px 0;"><strong>Amount:</strong> $${paymentDetails.amount.toFixed(2)}</p>
+                            <p style="color: #666; margin: 5px 0;"><strong>Date:</strong> ${new Date(paymentDetails.paymentDate).toLocaleString()}</p>
+                            <p style="color: #666; margin: 5px 0;"><strong>Station:</strong> ${paymentDetails.stationName}</p>
+                            <p style="color: #666; margin: 5px 0;"><strong>Booking ID:</strong> ${paymentDetails.bookingId}</p>
+                        </div>
+                        
+                        <p style="color: #666; line-height: 1.6; font-size: 14px;">
+                            Thank you for choosing ChargeMap. Your booking is now active and you're all set!
+                        </p>
+                    </div>
+                    
+                    <div style="background-color: #333; color: white; padding: 20px; text-align: center; font-size: 12px;">
+                        <p style="margin: 0;">© 2025 ChargeMap. All rights reserved.</p>
+                    </div>
+                </div>
+            `
+        };
+
+        await transporter.sendMail(mailOptions);
+        console.log('Payment confirmation email sent successfully to:', userEmail);
+        return true;
+    } catch (error) {
+        console.error('Error sending payment confirmation email:', error);
+        return false;
+    }
+};
+
 module.exports = {
     sendWelcomeEmail,
-    sendBookingConfirmationEmail
+    sendBookingConfirmationEmail,
+    sendPaymentConfirmationEmail
 };

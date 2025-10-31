@@ -75,23 +75,48 @@ exports.getStationRoute = async (req, res) => {
 exports.getRecommendations = async (req, res) => {
     const { currentLocation, carRange } = req.body;
     const { lat, lon } = currentLocation;
+    const maxDistance = carRange ? carRange * 1000 : 50000;
 
     try {
         const stations = await Station.find({
             location: {
                 $nearSphere: {
                     $geometry: { type: "Point", coordinates: [lon, lat] },
-                    $maxDistance: carRange * 1000
+                    $maxDistance: maxDistance
                 }
-            }
+            },
+            'chargers.status': 'available'
+        }).limit(10);
+
+        const stationsWithDetails = stations.map(station => {
+            const availableCount = station.chargers.filter(c => c.status === 'available').length;
+            const distance = calculateDistance(lat, lon, station.location.coordinates[1], station.location.coordinates[0]);
+            
+            return {
+                ...station.toObject(),
+                distance: distance,
+                availableChargers: availableCount
+            };
         });
 
-        res.json(stations);
+        res.json(stationsWithDetails);
 
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');
     }
+};
+
+const calculateDistance = (lat1, lon1, lat2, lon2) => {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = 
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return Math.round(R * c * 10) / 10;
 };
 
 exports.getAvailableSlots = async (req, res) => {

@@ -5,12 +5,12 @@ const NotificationService = require('../services/notificationService');
 const { sendBookingConfirmationEmail } = require('../services/emailService');
 
 exports.createBooking = async (req, res) => {
-    const { stationId, chargerId, startTime, vehicleInfo } = req.body;
+    const { stationId, chargerId, startTime, endTime, vehicleInfo } = req.body;
     const userId = req.user.id;
 
     try {
         const start = new Date(startTime);
-        const end = new Date(start.getTime() + 60 * 60 * 1000);
+        const end = endTime ? new Date(endTime) : new Date(start.getTime() + 60 * 60 * 1000);
 
         const existingBooking = await Booking.findOne({
             chargerId: chargerId,
@@ -25,13 +25,18 @@ exports.createBooking = async (req, res) => {
             return res.status(409).json({ msg: 'Slot is already booked for this time.' });
         }
 
+        const durationHours = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60));
+        const ratePerHour = 5;
+        const amount = durationHours * ratePerHour;
+
         const booking = new Booking({
             user: userId,
             station: stationId,
             chargerId: chargerId,
             startTime: start,
             endTime: end,
-            vehicleInfo: vehicleInfo
+            vehicleInfo: vehicleInfo,
+            amount: amount
         });
         await booking.save();
 

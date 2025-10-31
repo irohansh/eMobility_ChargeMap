@@ -1,6 +1,5 @@
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
-// Types
 export interface User {
   _id: string;
   name: string;
@@ -19,10 +18,23 @@ export interface Station {
   };
   chargers: {
     _id: string;
-    connectorType: 'Type 2' | 'CCS' | 'CHAdeMO';
+    connectorType: 'Type 2' | 'CCS' | 'CHAdeMO' | 'Tesla';
     powerKW: number;
     status: 'available' | 'occupied' | 'out-of-order';
+    amperage?: number;
+    voltage?: number;
   }[];
+  distance?: number;
+}
+
+export interface RealStation extends Station {
+  realTimeData?: {
+    source: string;
+    lastUpdated: string;
+    status: string;
+    pricing?: string;
+    amenities?: string;
+  };
 }
 
 export interface Booking {
@@ -91,7 +103,22 @@ export interface StationRecommendationRequest {
   minPowerKW?: number;
 }
 
-// API Client Class
+export interface Payment {
+  _id: string;
+  user: string;
+  booking: string;
+  amount: number;
+  currency: string;
+  paymentMethod: string;
+  paymentIntentId: string;
+  status: 'pending' | 'processing' | 'completed' | 'failed' | 'refunded';
+  stripeChargeId?: string;
+  cardLast4?: string;
+  cardBrand?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 class ApiClient {
   private baseURL: string;
   private token: string | null = null;
@@ -130,7 +157,6 @@ class ApiClient {
     }
   }
 
-  // Auth methods
   async login(credentials: LoginRequest): Promise<AuthResponse> {
     const response = await this.request<AuthResponse>('/auth/login', {
       method: 'POST',
@@ -162,7 +188,6 @@ class ApiClient {
     return !!this.token;
   }
 
-  // Station methods
   async getAllStations(): Promise<Station[]> {
     return this.request<Station[]>('/stations');
   }
@@ -192,7 +217,6 @@ class ApiClient {
     });
   }
 
-  // Booking methods
   async createBooking(bookingData: CreateBookingRequest): Promise<Booking> {
     return this.request<Booking>('/bookings', {
       method: 'POST',
@@ -212,7 +236,6 @@ class ApiClient {
     });
   }
 
-  // User methods
   async getMyBookings(): Promise<Booking[]> {
     return this.request<Booking[]>('/users/me/bookings');
   }
@@ -224,15 +247,39 @@ class ApiClient {
     });
   }
 
-  // Review methods
   async createReview(reviewData: CreateReviewRequest): Promise<Review> {
     return this.request<Review>('/reviews', {
       method: 'POST',
       body: JSON.stringify(reviewData),
     });
   }
+
+  async createPaymentIntent(bookingId: string): Promise<{ clientSecret: string; paymentIntentId: string; amount: number }> {
+    return this.request<{ clientSecret: string; paymentIntentId: string; amount: number }>('/payments/create-intent', {
+      method: 'POST',
+      body: JSON.stringify({ bookingId }),
+    });
+  }
+
+  async confirmPayment(paymentIntentId: string): Promise<{ msg: string; payment: any; booking: any }> {
+    return this.request<{ msg: string; payment: any; booking: any }>('/payments/confirm', {
+      method: 'POST',
+      body: JSON.stringify({ paymentIntentId }),
+    });
+  }
+
+  async getPaymentHistory(): Promise<any[]> {
+    return this.request<any[]>('/payments/history');
+  }
+
+  async getRealStations(lat: number, lon: number, radius: number = 50): Promise<RealStation[]> {
+    return this.request<RealStation[]>(`/real-stations/by-location?lat=${lat}&lon=${lon}&radius=${radius}`);
+  }
+
+  async getRealStationsByBounds(north: number, south: number, east: number, west: number): Promise<RealStation[]> {
+    return this.request<RealStation[]>(`/real-stations/by-bounds?north=${north}&south=${south}&east=${east}&west=${west}`);
+  }
 }
 
-// Create and export a singleton instance
 export const apiClient = new ApiClient(API_BASE_URL);
 export default apiClient;

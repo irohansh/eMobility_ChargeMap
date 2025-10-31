@@ -62,7 +62,6 @@ const ReviewModal: React.FC<ReviewModalProps> = ({
       onReviewCreated();
       onClose();
       
-      // Reset form
       setRating(0);
       setComment("");
     } catch (error) {

@@ -2,20 +2,23 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Clock, MapPin, Zap, User, Settings, Loader2, Star } from "lucide-react";
+import { Calendar, Clock, MapPin, Zap, User, Settings, Loader2, Star, CreditCard } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { apiClient, Booking } from "@/services/api";
 import { Link } from "react-router-dom";
 import ReviewModal from "@/components/ReviewModal";
 import EditProfileModal from "@/components/EditProfileModal";
+import PaymentModal from "@/components/PaymentModal";
 
 const Dashboard = () => {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
+  const [selectedPaymentBooking, setSelectedPaymentBooking] = useState<Booking | null>(null);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const { toast } = useToast();
   const { user, isAuthenticated, refreshUser } = useAuth();
 
@@ -111,6 +114,19 @@ const Dashboard = () => {
       description: "Your profile information has been updated successfully.",
     });
   };
+
+  const handlePayBooking = (booking: Booking) => {
+    setSelectedPaymentBooking(booking);
+    setIsPaymentModalOpen(true);
+  };
+
+  const handlePaymentSuccess = () => {
+    loadBookings();
+    toast({
+      title: "Payment Successful",
+      description: "Your booking payment has been processed successfully.",
+    });
+  };
   return (
     <div className="min-h-screen pt-20 pb-8">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -196,17 +212,30 @@ const Dashboard = () => {
                       >
                         <div className="space-y-2">
                           <div className="flex items-center gap-2">
-                            <h4 className="font-semibold">{booking.station.name}</h4>
+                            <h4 className="font-semibold">{booking.station?.name || 'Unknown Station'}</h4>
                             <Badge
                               variant={booking.status === "confirmed" ? "default" : "secondary"}
                               className={booking.status === "confirmed" ? "bg-primary" : ""}
                             >
                               {booking.status}
                             </Badge>
+                            {(booking as any).paymentStatus && (
+                              <Badge
+                                variant={booking.paymentStatus === "paid" ? "default" : "destructive"}
+                                className={booking.paymentStatus === "paid" ? "bg-green-500" : ""}
+                              >
+                                {booking.paymentStatus === "paid" ? "Paid" : "Pending Payment"}
+                              </Badge>
+                            )}
+                            {(booking as any).amount && (
+                              <Badge variant="outline">
+                                ${((booking as any).amount || 0).toFixed(2)}
+                              </Badge>
+                            )}
                           </div>
                           <div className="flex items-center gap-2 text-sm text-muted-foreground">
                             <MapPin className="w-4 h-4" />
-                            {booking.station.address}
+                            {booking.station?.address || 'Address not available'}
                           </div>
                           <div className="flex items-center gap-4 text-sm text-muted-foreground">
                             <div className="flex items-center gap-1">
@@ -218,7 +247,18 @@ const Dashboard = () => {
                           </div>
                         </div>
                         <div className="flex gap-2 mt-4 sm:mt-0">
-                          {booking.status === "confirmed" && (
+                          {(booking as any).paymentStatus === "pending" && booking.status === "confirmed" && (
+                            <Button 
+                              variant="default" 
+                              size="sm"
+                              onClick={() => handlePayBooking(booking)}
+                              className="shadow-electric flex items-center gap-1"
+                            >
+                              <CreditCard className="w-4 h-4" />
+                              Pay Now ${((booking as any).amount || 0).toFixed(2)}
+                            </Button>
+                          )}
+                          {booking.status === "confirmed" && (booking as any).paymentStatus === "paid" && (
                             <>
                               <Button 
                                 variant="outline" 
@@ -302,8 +342,21 @@ const Dashboard = () => {
                   variant="outline" 
                   className="w-full"
                   onClick={() => {
-                    const bookingsElement = document.querySelector('[data-bookings-section]');
-                    bookingsElement?.scrollIntoView({ behavior: 'smooth' });
+                    loadBookings();
+                    setTimeout(() => {
+                      const bookingsElement = document.querySelector('[data-bookings-section]');
+                      if (bookingsElement) {
+                        bookingsElement.scrollIntoView({ 
+                          behavior: 'smooth', 
+                          block: 'center',
+                          inline: 'nearest'
+                        });
+                        toast({
+                          title: "Viewing Bookings",
+                          description: `You have ${bookings.length} total booking${bookings.length !== 1 ? 's' : ''}.`,
+                        });
+                      }
+                    }, 100);
                   }}
                 >
                   <Calendar className="w-4 h-4 mr-2" />
@@ -349,6 +402,17 @@ const Dashboard = () => {
           isOpen={isEditProfileModalOpen}
           onClose={() => setIsEditProfileModalOpen(false)}
           onProfileUpdated={handleProfileUpdated}
+        />
+
+        <PaymentModal
+          isOpen={isPaymentModalOpen}
+          onClose={() => {
+            setIsPaymentModalOpen(false);
+            setSelectedPaymentBooking(null);
+          }}
+          bookingId={selectedPaymentBooking?._id || ""}
+          amount={selectedPaymentBooking?.amount || 0}
+          onPaymentSuccess={handlePaymentSuccess}
         />
       </div>
     </div>

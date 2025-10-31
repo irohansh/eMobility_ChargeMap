@@ -4,30 +4,47 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+bun-debug.log*
+bun.lockb
 
 # Environment variables
 .env
+.env.*
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
+.env.backend
+backend.env
+*.env
+!.env.example
 
 # Build outputs
 build/
 dist/
 out/
+.next/
+.nuxt/
 
 # Frontend build outputs
 frontend/dist/
 frontend/build/
 frontend/out/
+frontend/.next/
+frontend/.nuxt/
+frontend/.vite/
 
 # Logs
-logs
+logs/
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
 # Runtime data
-pids
+pids/
 *.pid
 *.seed
 *.pid.lock
@@ -35,15 +52,18 @@ pids
 # Coverage directory
 coverage/
 *.lcov
+.nyc_output/
 
 # TypeScript cache
 *.tsbuildinfo
 
 # Optional npm cache
-.npm
+.npm/
+.npmcache/
 
 # Optional eslint cache
 .eslintcache
+.eslintcache.*
 
 # Optional REPL history
 .node_repl_history
@@ -53,10 +73,18 @@ coverage/
 
 # Yarn Integrity file
 .yarn-integrity
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
 
 # Cache directories
-.cache
-.parcel-cache
+.cache/
+.parcel-cache/
+.turbo/
+.vite/
+.swc/
 
 # Frontend cache and temp files
 frontend/.vite/
@@ -64,6 +92,8 @@ frontend/.cache/
 frontend/.temp/
 frontend/.next/
 frontend/.nuxt/
+frontend/.turbo/
+frontend/.swc/
 
 # Database files
 *.db
@@ -71,23 +101,31 @@ frontend/.nuxt/
 *.sqlite3
 data/
 mongodb-data/
+*.mongo
 
 # SSL certificates
 *.pem
 *.key
 *.crt
+*.cert
+*.csr
 
 # API keys and secrets
 secrets/
 keys/
 *.secret
+*.private
 
 # Temporary folders
 tmp/
 temp/
+.tmp/
 
-# Test files
+# Test files and results
 test-results/
+playwright-report/
+playwright/.cache/
+.coverage/
 
 # IDEs and editors
 .vscode/
@@ -95,6 +133,12 @@ test-results/
 *.swp
 *.swo
 *~
+.project
+.classpath
+.settings/
+*.sublime-project
+*.sublime-workspace
+.vscode-test/
 
 # OS generated files
 .DS_Store
@@ -105,21 +149,27 @@ test-results/
 ehthumbs.db
 Thumbs.db
 Desktop.ini
+$RECYCLE.BIN/
 
-# Lock files (keep package-lock.json)
+# Lock files (keeping package-lock.json in root, but ignoring others)
 yarn.lock
 pnpm-lock.yaml
+bun.lockb
+package-lock.json.bak
 
 # Frontend specific files
 frontend/node_modules/
 frontend/package-lock.json
 frontend/yarn.lock
 frontend/pnpm-lock.yaml
+frontend/bun.lockb
 frontend/.env
+frontend/.env.*
 frontend/.env.local
 frontend/.env.development.local
 frontend/.env.test.local
 frontend/.env.production.local
+frontend/backend.env
 
 # Frontend logs
 frontend/logs/
@@ -131,9 +181,11 @@ frontend/yarn-error.log*
 # Frontend coverage
 frontend/coverage/
 frontend/*.lcov
+frontend/.nyc_output/
 
 # Frontend TypeScript
 frontend/*.tsbuildinfo
+frontend/.tsbuildinfo
 
 # Frontend IDE files
 frontend/.vscode/
@@ -151,3 +203,37 @@ frontend/.Trashes
 frontend/ehthumbs.db
 frontend/Thumbs.db
 frontend/Desktop.ini
+
+# Serverless directories
+.serverless/
+
+# FuseBox cache
+.fusebox/
+
+# DynamoDB Local files
+.dynamodb/
+
+# TernJS port file
+.tern-port
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# Storybook build outputs
+storybook-static
+
+# Backup files
+*.backup
+*.bak
+*.old
+*.orig
+
+# Local development scripts
+start-dev.sh.local
+*.local.sh
+
+# Misc
+*.patch
+*.diff
+.cache
+.meta

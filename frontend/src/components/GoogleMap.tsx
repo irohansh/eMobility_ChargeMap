@@ -51,7 +51,6 @@ const GoogleMap: React.FC<GoogleMapProps> = ({
 
           setMap(mapInstance);
 
-          // Add markers for stations
           const stationMarkers: google.maps.Marker[] = [];
           
           stations.forEach((station) => {
@@ -76,11 +75,9 @@ const GoogleMap: React.FC<GoogleMapProps> = ({
               }
             });
 
-            // Add click listener
             marker.addListener('click', () => {
               onStationSelect(station);
               
-              // Center map on selected station
               mapInstance.setCenter(position);
               mapInstance.setZoom(15);
             });
@@ -90,7 +87,6 @@ const GoogleMap: React.FC<GoogleMapProps> = ({
 
           setMarkers(stationMarkers);
 
-          // Center map on stations if available
           if (stations.length > 0) {
             const bounds = new google.maps.LatLngBounds();
             stations.forEach(station => {
@@ -113,11 +109,9 @@ const GoogleMap: React.FC<GoogleMapProps> = ({
     initMap();
   }, [apiKey]);
 
-  // Update markers when stations change
   useEffect(() => {
     if (!map || !stations.length) return;
 
-    // Clear existing markers
     markers.forEach(marker => marker.setMap(null));
 
     const { Marker } = google.maps;
@@ -156,7 +150,6 @@ const GoogleMap: React.FC<GoogleMapProps> = ({
 
     setMarkers(newMarkers);
 
-    // Fit bounds to show all stations
     const bounds = new google.maps.LatLngBounds();
     stations.forEach(station => {
       bounds.extend({
@@ -167,7 +160,6 @@ const GoogleMap: React.FC<GoogleMapProps> = ({
     map.fitBounds(bounds);
   }, [stations, map]);
 
-  // Highlight selected station
   useEffect(() => {
     if (!map || !selectedStation) return;
 

@@ -7,7 +7,6 @@ import heroImage from "@/assets/hero-charging.jpg";
 const Landing = () => {
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
       <section className="relative pt-20 pb-16 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-hero" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -54,7 +53,6 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Features Section */}
       <section className="py-16 bg-muted/30">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -107,7 +105,6 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
       <section className="py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-gradient-card rounded-3xl p-8 sm:p-12 text-center">

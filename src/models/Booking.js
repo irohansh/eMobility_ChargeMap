@@ -8,6 +8,18 @@ const BookingSchema = new mongoose.Schema({
     endTime: { type: Date, required: true },
     vehicleInfo: { type: String, default: 'N/A' },
     status: { type: String, enum: ['confirmed', 'cancelled', 'completed'], default: 'confirmed' },
+    paymentStatus: { 
+        type: String, 
+        enum: ['pending', 'paid', 'refunded'], 
+        default: 'pending' 
+    },
+    amount: { 
+        type: Number, 
+        default: 0 
+    },
+    paymentIntentId: { 
+        type: String 
+    }
 }, { timestamps: true });
 
 BookingSchema.index({ chargerId: 1, startTime: 1, status: 1 }, {

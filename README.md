@@ -1,70 +1,80 @@
-# <div align="center">eMobility ChargeMap</div>
+<div align="center">
+
+# ⚡ eMobility ChargeMap
+
+### Charge Smarter Drive farther
+
+**A modern full-stack platform for finding and booking EV charging stations**
 
 [![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
 [![React](https://img.shields.io/badge/React-18+-blue.svg)](https://reactjs.org/)
-[![MongoDB](https://img.shields.io/badge/MongoDB-7+-green.svg)](https://www.mongodb.com/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5+-blue.svg)](https://www.typescriptlang.org/)
-[![License](https://img.shields.io/badge/License-ISC-yellow.svg)](LICENSE)
-[![Status](https://img.shields.io/badge/Status-Active-brightgreen.svg)](https://github.com/your-org/chargemap)
+[![MongoDB](https://img.shields.io/badge/MongoDB-7+-green.svg)](https://www.mongodb.com/)
 
-### What Makes Us Different
-
-- **Intelligence First**: AI-powered recommendations that learn from your driving patterns
-- **Zero Friction**: Book, charge, and go—all in under 30 seconds
-- **Always Available**: Real-time updates ensure you never arrive at a full station
-- **Built for Scale**: Enterprise-grade architecture that grows with your needs
+</div>
 
 ---
 
-## Core Features
+## Screenshots
 
-### Smart Station Management
-- **Live Status Updates**: Real-time monitoring of all charging stations
-- **Multi-Connector Support**: Type 2, CCS, and CHAdeMO compatibility
-- **Geographic Intelligence**: Google Maps integration with precise location data
-- **Dynamic Power Management**: Intelligent load balancing and allocation
+<div align="center">
 
-### Seamless User Experience
-- **One-Click Booking**: Advanced slot management with zero conflicts
-- **Smart Recommendations**: AI-powered suggestions based on location and range
-- **Instant Authentication**: JWT security with persistent sessions
-- **Mobile-First Design**: Beautiful, responsive interface for every device
+### Landing Page
+![Landing Page](./landing-page.png)
 
-### Advanced Analytics
-- **Real-Time Insights**: Live occupancy and usage pattern tracking
-- **Performance Metrics**: Energy consumption and efficiency analysis
-- **Predictive Maintenance**: Automated alerts for optimal station health
+### Real Station Map
+![Real Station Map](./real-station-map.png)
+
+</div>
 
 ---
 
-## Technology Stack
+## Features
 
-### Backend Excellence
-- **Runtime**: Node.js 18+ with Express.js
-- **Database**: MongoDB with Mongoose ODM
-- **Security**: JWT with bcrypt password hashing
-- **Communication**: Nodemailer with beautiful HTML templates
-- **Maps**: Google Maps API for geolocation services
+| Feature | Description |
+|---------|-------------|
+| 🔍 **Station Discovery** | Find nearby charging stations with real-time availability |
+| 🗺️ **Interactive Maps** | OpenStreetMap integration with distance calculations |
+| 📅 **Smart Booking** | Advanced time slot selection with conflict prevention |
+| 🌐 **Real Station Data** | Integration with Open Charge Map API |
+| 👤 **User Dashboard** | Manage bookings, view history, and update profile |
+| 💳 **Payment Integration** | Stripe integration for secure payments |
+| ⭐ **Reviews & Ratings** | Rate and review charging stations |
 
-### Frontend Innovation
-- **Framework**: React 18 with TypeScript
-- **Build Tool**: Vite for lightning-fast development
-- **UI Library**: Shadcn/ui with Tailwind CSS
-- **State Management**: React Context API with localStorage persistence
-- **Navigation**: React Router DOM with protected routes
+---
 
-### Infrastructure Ready
-- **Database**: MongoDB with geospatial indexing for location queries
-- **Security**: CORS protection, input validation, and rate limiting
+## Tech Stack
+
+<div align="center">
+
+### Backend
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white)
+![Express](https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white)
+
+### Frontend
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+
+</div>
+
+**Key Technologies:**
+- **Backend**: Node.js, Express.js, MongoDB, Mongoose, JWT, Nodemailer
+- **Frontend**: React 18, TypeScript, Vite, Tailwind CSS, Shadcn/ui, Leaflet
+- **Services**: Stripe (Payments), Open Charge Map API (Real stations)
 
 ---
 
 ## Quick Start
 
 ### Prerequisites
-- Node.js 18 or higher
-- MongoDB 5.0 or higher
-- npm or yarn package manager
+
+- Node.js 18+ 
+- MongoDB 5.0+
+- npm or yarn
 
 ### Installation
 
@@ -76,198 +86,128 @@
 
 2. **Install dependencies**
    ```bash
-   # Backend dependencies
+   # Install backend dependencies
    npm install
    
-   # Frontend dependencies
-   cd frontend
-   npm install
-   cd ..
+   # Install frontend dependencies
+   cd frontend && npm install && cd ..
    ```
 
 3. **Configure environment**
    ```bash
-   cp env.example .env
-   # Edit .env with your configuration
+   # Backend environment
+   cp env.example .env.backend
+   
+   # Frontend environment
+   cp frontend/env.example frontend/.env
+   ```
+   
+   **Required environment variables:**
+   
+   **Backend** (`.env.backend`):
+   ```env
+   MONGODB_URI=mongodb://localhost:27017/chargemap
+   JWT_SECRET=your-secret-key
+   EMAIL_USER=your-email@gmail.com
+   EMAIL_PASS=your-app-password
+   PORT=3000
+   ```
+   
+   **Frontend** (`frontend/.env`):
+   ```env
+   VITE_API_URL=http://localhost:3000/api
+   VITE_STRIPE_PUBLISHABLE_KEY=your-stripe-key
    ```
 
 4. **Start development servers**
    ```bash
-   # Terminal 1 - Backend
+   # Terminal 1 - Backend (port 3000)
    npm start
    
-   # Terminal 2 - Frontend
+   # Terminal 2 - Frontend (port 8080)
    cd frontend && npm run dev
    ```
 
+5. **Access the application**
+   - Frontend: http://localhost:8080
+   - Backend API: http://localhost:3000
 
 ---
 
-## API Reference
+## API Endpoints
 
 ### Authentication
 ```
-POST /api/auth/register    # User registration
-POST /api/auth/login       # User authentication
+POST /api/auth/register    → Register new user
+POST /api/auth/login       → User login
 ```
 
 ### Stations
 ```
-GET  /api/stations                    # List all stations
-GET  /api/stations/:id               # Get station details
-GET  /api/stations/:id/route         # Get directions to station
-POST /api/stations/recommendations   # Get smart recommendations
-GET  /api/stations/:id/slots         # Check availability
+GET  /api/stations                        → List all stations
+GET  /api/stations/:id                    → Get station details
+POST /api/stations/recommendations        → Get nearby stations
+GET  /api/real-stations/by-location        → Get real stations by location
+GET  /api/availability/slots              → Get available time slots
 ```
 
 ### Bookings
 ```
-POST   /api/bookings              # Create new booking
-DELETE /api/bookings/:id          # Cancel booking
-POST   /api/bookings/:id/complete # Mark as completed
+POST   /api/bookings              → Create booking
+DELETE /api/bookings/:id          → Cancel booking
+POST   /api/bookings/:id/complete → Complete booking
 ```
 
-### User Management
+### User
 ```
-GET /api/users/me/bookings  # Get user's bookings
-PUT /api/users/me/profile   # Update user profile
+GET /api/users/me/bookings  → Get user bookings
+PUT /api/users/me/profile    → Update profile
 ```
 
 ### Reviews
 ```
-POST /api/reviews  # Submit station review
+POST /api/reviews  → Submit review
 ```
 
 ---
 
-## Configuration
+## Project Structure
 
-### Environment Variables
-
-Create a `.env` file in the root directory:
-
-```env
-# Server Configuration
-PORT=3000
-NODE_ENV=development
-FRONTEND_URL=http://localhost:5173
-
-# Database
-MONGODB_URI=mongodb://localhost:27017/chargemap
-
-# Security
-JWT_SECRET=your-super-secret-jwt-key-here
-JWT_EXPIRES_IN=5h
-
-# Email Service
-EMAIL_USER=your-email@gmail.com
-EMAIL_PASS=your-app-password
-
-# Google Maps
-GOOGLE_MAPS_API_KEY=your-google-maps-api-key
-```
-
-### Database Setup
-
-The application automatically creates the necessary collections and indexes on first run. For production, ensure MongoDB is properly configured with authentication and SSL.
-
----
-
-## Development
-
-### Project Structure
 ```
 chargemap/
-├── src/                    # Backend source code
-│   ├── controllers/        # Route handlers
-│   ├── models/            # Database schemas
-│   ├── routes/            # API endpoints
-│   ├── services/          # Business logic
-│   ├── middleware/        # Custom middleware
-│   └── config/            # Configuration files
-├── frontend/              # React application
+├── src/                        # Backend source
+│   ├── controllers/            # Route handlers
+│   ├── models/                 # Database schemas
+│   ├── routes/                 # API routes
+│   ├── services/               # Business logic
+│   ├── middleware/             # Custom middleware
+│   ├── config/                 # Configuration
+│   └── validation/             # Input validation
+│
+├── frontend/                   # React application
 │   ├── src/
-│   │   ├── components/    # Reusable UI components
-│   │   ├── pages/         # Page components
-│   │   ├── contexts/      # React contexts
-│   │   ├── services/      # API client
-│   │   └── hooks/         # Custom hooks
-│   └── public/            # Static assets
-└── docs/                  # Documentation
-```
-
-### Available Scripts
-
-**Backend:**
-```bash
-npm start          # Start development server
-npm run build      # Build for production
-```
-
-**Frontend:**
-```bash
-npm run dev        # Start development server
-npm run build      # Build for production
+│   │   ├── components/         # UI components
+│   │   ├── pages/              # Page components
+│   │   ├── services/           # API client
+│   │   ├── contexts/           # React contexts
+│   │   └── hooks/              # Custom hooks
+│   └── public/                 # Static assets
+│
+└── README.md
 ```
 
 ---
 
-## Roadmap
+## License
 
-### Phase 2 - Advanced Analytics
-- **Machine Learning Integration**: Predictive analytics for demand forecasting
-- **Advanced Reporting**: Custom dashboard with real-time charts
-- **API Rate Limiting**: Enhanced security with request throttling
-- **WebSocket Support**: Real-time updates for station status
-
-### Phase 3 - Enterprise Features
-- **Multi-tenant Architecture**: Support for multiple charging networks
-- **Payment Integration**: Stripe/PayPal integration for booking payments
-
-### Phase 4 - Scalability
-- **Microservices Architecture**: Service decomposition for better scalability
-- **Redis Caching**: High-performance caching layer
-- **CDN Integration**: Global content delivery optimization
-- **Kubernetes Deployment**: Container orchestration for production
-- **Docker Deployment**: Docker-ready with environment-based configuration
+ISC License
 
 ---
 
-## Security
+<div align="center">
 
-- **Authentication**: JWT tokens with configurable expiration
-- **Password Security**: bcrypt hashing with salt rounds
-- **Input Validation**: Comprehensive request validation
-- **CORS Protection**: Configurable cross-origin resource sharing
-- **Rate Limiting**: API endpoint protection against abuse
-- **Environment Security**: Secure handling of sensitive configuration
+**Made with ⚡ by the eMobility ChargeMap Team**
 
----
+[Back to Top](#⚡-emobility-chargemap)
 
-## Performance
-
-- **Database Optimization**: Indexed queries for fast data retrieval
-- **Frontend Optimization**: Code splitting and lazy loading
-- **Caching Strategy**: Intelligent caching for frequently accessed data
-- **Image Optimization**: Compressed assets for faster loading
-- **Bundle Analysis**: Optimized JavaScript bundles
-
----
-
-## Contributing
-
-We welcome contributions from the community. Please follow these guidelines:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-### Development Guidelines
-- Follow TypeScript best practices
-- Write comprehensive tests for new features
-- Update documentation for API changes
-- Ensure all tests pass before submitting PR
-
----
+</div>

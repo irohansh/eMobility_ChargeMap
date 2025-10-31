@@ -1,6 +1,5 @@
 const { z } = require('zod');
 
-// User validation schemas
 const registerSchema = z.object({
     name: z.string()
         .min(2, 'Name must be at least 2 characters')
@@ -26,7 +25,6 @@ const loginSchema = z.object({
         .min(1, 'Password is required')
 });
 
-// Station validation schemas
 const stationRecommendationSchema = z.object({
     latitude: z.number()
         .min(-90, 'Latitude must be between -90 and 90')
@@ -45,7 +43,6 @@ const stationRecommendationSchema = z.object({
         .optional()
 });
 
-// Booking validation schemas
 const createBookingSchema = z.object({
     stationId: z.string()
         .min(1, 'Station ID is required'),
@@ -63,17 +60,14 @@ const createBookingSchema = z.object({
     const endTime = new Date(data.endTime);
     const now = new Date();
     
-    // Check if start time is in the future
     if (startTime <= now) {
         return false;
     }
     
-    // Check if end time is after start time
     if (endTime <= startTime) {
         return false;
     }
     
-    // Check if booking duration is reasonable (max 8 hours)
     const durationHours = (endTime - startTime) / (1000 * 60 * 60);
     if (durationHours > 8) {
         return false;
@@ -84,7 +78,6 @@ const createBookingSchema = z.object({
     message: "Invalid booking time: start time must be in the future, end time must be after start time, and duration must be less than 8 hours"
 });
 
-// Review validation schemas
 const createReviewSchema = z.object({
     stationId: z.string()
         .min(1, 'Station ID is required'),
@@ -102,7 +95,6 @@ const createReviewSchema = z.object({
         .optional()
 });
 
-// Validation middleware function
 const validate = (schema) => {
     return (req, res, next) => {
         try {

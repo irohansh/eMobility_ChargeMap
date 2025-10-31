@@ -5,7 +5,6 @@ const About = () => {
   return (
     <div className="min-h-screen pt-20 pb-8">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Hero Section */}
         <section className="text-center mb-16">
           <h1 className="text-4xl sm:text-5xl font-bold text-foreground mb-6">
             About{" "}
@@ -19,7 +18,6 @@ const About = () => {
           </p>
         </section>
 
-        {/* Mission Section */}
         <section className="mb-16">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
@@ -60,7 +58,6 @@ const About = () => {
           </div>
         </section>
 
-        {/* Values Section */}
         <section className="mb-16">
           <h2 className="text-3xl font-bold text-foreground text-center mb-12">
             Our Values
@@ -105,7 +102,6 @@ const About = () => {
           </div>
         </section>
 
-        {/* Team Section */}
         <section className="text-center">
           <h2 className="text-3xl font-bold text-foreground mb-6">
             Built by EV Enthusiasts

@@ -3,28 +3,39 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Search, MapPin, Zap, Clock, Filter, Loader2, ExternalLink } from "lucide-react";
+import { Search, MapPin, Zap, Clock, Filter, Loader2, ExternalLink, Globe } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { apiClient, Station } from "@/services/api";
+import { apiClient, Station, RealStation } from "@/services/api";
 import { useAuth } from "@/contexts/AuthContext";
-import BookingModal from "@/components/BookingModal";
-import GoogleMap from "@/components/GoogleMap";
+import EnhancedBookingModal from "@/components/EnhancedBookingModal";
+import OpenStreetMap from "@/components/OpenStreetMap";
+import RealStationMap from "@/components/RealStationMap";
 
 const Stations = () => {
   const [stations, setStations] = useState<Station[]>([]);
+  const [realStations, setRealStations] = useState<RealStation[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"list" | "map">("list");
+  const [useRealStations, setUseRealStations] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isSeeding, setIsSeeding] = useState(false);
   const [selectedStation, setSelectedStation] = useState<Station | null>(null);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [mapSelectedStation, setMapSelectedStation] = useState<Station | null>(null);
+  const [userLocation, setUserLocation] = useState<{ lat: number; lon: number } | null>(null);
+  const [isLoadingLocation, setIsLoadingLocation] = useState(false);
   const { toast } = useToast();
   const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     loadStations();
   }, []);
+
+  useEffect(() => {
+    if (useRealStations && userLocation && realStations.length === 0) {
+      loadRealStations();
+    }
+  }, [useRealStations, userLocation]);
 
   const loadStations = async () => {
     try {
@@ -42,6 +53,117 @@ const Stations = () => {
     }
   };
 
+  const getCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      toast({
+        title: "Geolocation Not Supported",
+        description: "Your browser does not support geolocation.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsLoadingLocation(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setUserLocation({
+          lat: position.coords.latitude,
+          lon: position.coords.longitude,
+        });
+        toast({
+          title: "Location Found",
+          description: "Showing stations near your location.",
+        });
+        setIsLoadingLocation(false);
+      },
+      (error) => {
+        toast({
+          title: "Location Error",
+          description: "Could not get your location. Please enable location services.",
+          variant: "destructive",
+        });
+        setIsLoadingLocation(false);
+      }
+    );
+  };
+
+  const loadNearbyStations = async () => {
+    if (!userLocation) {
+      toast({
+        title: "Location Required",
+        description: "Please enable location first.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const data = await apiClient.getStationRecommendations({
+        currentLocation: { lat: userLocation.lat, lon: userLocation.lon },
+        carRange: 50,
+      });
+      setStations(data);
+      toast({
+        title: "Nearby Stations Loaded",
+        description: `Found ${data.length} stations near you.`,
+      });
+    } catch (error) {
+      toast({
+        title: "Error Loading Nearby Stations",
+        description: error instanceof Error ? error.message : "Failed to load nearby stations",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const loadRealStations = async () => {
+    if (!userLocation) {
+      toast({
+        title: "Location Required",
+        description: "Please enable location first.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const data = await apiClient.getRealStations(
+        userLocation.lat,
+        userLocation.lon,
+        50
+      );
+      
+      const stationsArray = Array.isArray(data) ? data : [];
+      setRealStations(stationsArray);
+      
+      if (stationsArray.length === 0) {
+        toast({
+          title: "No Stations Found",
+          description: "No charging stations found near your location. Try a different location or increase the radius.",
+          variant: "default",
+        });
+      } else {
+        toast({
+          title: "Real Stations Loaded",
+          description: `Found ${stationsArray.length} real stations near you.`,
+        });
+      }
+    } catch (error) {
+      setRealStations([]);
+      toast({
+        title: "Error Loading Real Stations",
+        description: error instanceof Error ? error.message : "Failed to load real stations",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleSeedStations = async () => {
     try {
       setIsSeeding(true);
@@ -50,7 +172,7 @@ const Stations = () => {
         title: "Stations Seeded",
         description: "Sample charging stations have been added to the database.",
       });
-      loadStations(); // Reload stations after seeding
+      loadStations();
     } catch (error) {
       toast({
         title: "Error Seeding Stations",
@@ -74,7 +196,9 @@ const Stations = () => {
     return [...new Set(station.chargers.map(charger => charger.connectorType))];
   };
 
-  const filteredStations = stations.filter(station =>
+  const activeStations = useRealStations ? realStations : stations;
+  
+  const filteredStations = activeStations.filter(station =>
     station.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     station.address.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -93,7 +217,6 @@ const Stations = () => {
   };
 
   const handleBookingCreated = () => {
-    // Optionally reload stations to update availability
     loadStations();
   };
 
@@ -112,7 +235,6 @@ const Stations = () => {
   return (
     <div className="min-h-screen pt-20 pb-8">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
             Find Charging Stations
@@ -122,7 +244,6 @@ const Stations = () => {
           </p>
         </div>
 
-        {/* Search and Filters */}
         <div className="mb-8 space-y-4">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1 relative">
@@ -140,6 +261,28 @@ const Stations = () => {
             </Button>
             <Button 
               variant="outline" 
+              onClick={getCurrentLocation}
+              disabled={isLoadingLocation}
+              className="flex items-center gap-2"
+            >
+              {isLoadingLocation ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <MapPin className="w-4 h-4" />
+              )}
+              {isLoadingLocation ? "Getting Location..." : "My Location"}
+            </Button>
+            <Button 
+              variant="default" 
+              onClick={loadNearbyStations}
+              disabled={!userLocation}
+              className="shadow-electric flex items-center gap-2"
+            >
+              <MapPin className="w-4 h-4" />
+              Show Nearby
+            </Button>
+            <Button 
+              variant="outline" 
               onClick={handleSeedStations}
               disabled={isSeeding}
               className="flex items-center gap-2"
@@ -151,9 +294,27 @@ const Stations = () => {
               )}
               {isSeeding ? "Seeding..." : "Seed Stations"}
             </Button>
+            <Button 
+              variant={useRealStations ? "default" : "outline"}
+              onClick={async () => {
+                if (!useRealStations && userLocation) {
+                  await loadRealStations();
+                  setUseRealStations(true);
+                } else {
+                  setUseRealStations(!useRealStations);
+                  if (!useRealStations) {
+                    loadStations();
+                  }
+                }
+              }}
+              disabled={!userLocation}
+              className={`flex items-center gap-2 ${useRealStations ? 'shadow-electric' : ''}`}
+            >
+              <Globe className="w-4 h-4" />
+              {useRealStations ? "Real Stations" : "Load Real Stations"}
+            </Button>
           </div>
 
-          {/* View Toggle */}
           <div className="flex gap-2">
             <Button
               variant={viewMode === "list" ? "default" : "outline"}
@@ -172,7 +333,6 @@ const Stations = () => {
           </div>
         </div>
 
-        {/* Stations List */}
         {viewMode === "list" && (
           <div className="space-y-4">
             {isLoading ? (
@@ -289,58 +449,79 @@ const Stations = () => {
           </div>
         )}
 
-        {/* Map View */}
         {viewMode === "map" && (
-          <div className="space-y-4">
-            <GoogleMap
-              stations={filteredStations}
-              onStationSelect={handleMapStationSelect}
-              selectedStation={mapSelectedStation}
-            />
+          <div className="relative">
+            <div className="h-96 w-full rounded-lg overflow-hidden border border-border">
+              {useRealStations ? (
+                <RealStationMap
+                  userLocation={userLocation}
+                  onStationSelect={handleMapStationSelect}
+                />
+              ) : (
+                <OpenStreetMap
+                  stations={filteredStations}
+                  onStationSelect={handleMapStationSelect}
+                  selectedStation={mapSelectedStation}
+                  userLocation={userLocation}
+                />
+              )}
+            </div>
             {mapSelectedStation && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
-                    <span>{mapSelectedStation.name}</span>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => setMapSelectedStation(null)}
-                    >
-                      Close
-                    </Button>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <p className="text-muted-foreground">{mapSelectedStation.address}</p>
-                    <div className="flex gap-2">
-                      <Button
-                        size="sm"
-                        onClick={() => handleBookStation(mapSelectedStation)}
-                        className="shadow-electric"
-                      >
-                        Book Station
-                      </Button>
+              <div className="absolute top-4 left-4 right-4 z-50">
+                <Card className="shadow-xl border-2 border-primary/30 bg-white/95 backdrop-blur-sm">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="flex items-center justify-between text-lg">
+                      <span className="truncate">{mapSelectedStation.name}</span>
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => openInGoogleMaps(mapSelectedStation)}
-                        className="flex items-center gap-1"
+                        onClick={() => setMapSelectedStation(null)}
+                        className="ml-2 flex-shrink-0"
                       >
-                        <ExternalLink className="w-3 h-3" />
-                        Open in Maps
+                        ✕
                       </Button>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className="space-y-3">
+                      <div className="flex items-start gap-2 text-sm text-muted-foreground">
+                        <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                        <p className="line-clamp-2">{mapSelectedStation.address}</p>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm">
+                        <Zap className="w-4 h-4 text-primary" />
+                        <span>
+                          {mapSelectedStation.chargers.filter(c => c.status === 'available').length}/
+                          {mapSelectedStation.chargers.length} chargers available
+                        </span>
+                      </div>
+                      <div className="flex gap-2 pt-2">
+                        <Button
+                          size="sm"
+                          onClick={() => handleBookStation(mapSelectedStation)}
+                          className="shadow-electric flex-1 bg-primary hover:bg-primary/90"
+                        >
+                          Book Charging Session
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => openInGoogleMaps(mapSelectedStation)}
+                          className="flex items-center gap-1"
+                        >
+                          <ExternalLink className="w-3 h-3" />
+                          Directions
+                        </Button>
+                      </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </div>
             )}
           </div>
         )}
 
-        {/* Booking Modal */}
-        <BookingModal
+        <EnhancedBookingModal
           station={selectedStation}
           isOpen={isBookingModalOpen}
           onClose={() => {
