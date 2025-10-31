@@ -20,10 +20,12 @@
 <div align="center">
 
 ### Landing Page
-<img src="landing-page.png" alt="Landing Page" width="800"/>
+
+![Landing Page](landing-page.png)
 
 ### Real Station Map
-<img src="real-station-map.png" alt="Real Station Map" width="800"/>
+
+![Real Station Map](real-station-map.png)
 
 </div>
 
