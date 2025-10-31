@@ -21,11 +21,11 @@
 
 ### Landing Page
 
-![Landing Page](landing-page.png)
+![Landing Page](./landing-page.png)
 
 ### Real Station Map
 
-![Real Station Map](real-station-map.png)
+![Real Station Map](./real-station-map.png)
 
 </div>
 
