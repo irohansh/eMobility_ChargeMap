@@ -1,6 +1,6 @@
 <div align="center">
 
-# ⚡ eMobility ChargeMap
+# eMobility ChargeMap
 
 ### Charge Smarter Drive farther
 
@@ -20,10 +20,10 @@
 <div align="center">
 
 ### Landing Page
-![Landing Page](./landing-page.png)
+![Landing Page](landing-page.png)
 
 ### Real Station Map
-![Real Station Map](./real-station-map.png)
+![Real Station Map](real-station-map.png)
 
 </div>
 
@@ -206,7 +206,7 @@ ISC License
 
 <div align="center">
 
-**Made with ⚡ by the eMobility ChargeMap Team**
 
 [Back to Top](#⚡-emobility-chargemap)
 
+</div>
