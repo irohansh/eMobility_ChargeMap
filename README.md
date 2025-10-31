@@ -210,4 +210,3 @@ ISC License
 
 [Back to Top](#⚡-emobility-chargemap)
 
-</div>
