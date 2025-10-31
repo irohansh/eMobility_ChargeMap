@@ -20,10 +20,10 @@
 <div align="center">
 
 ### Landing Page
-![Landing Page](landing-page.png)
+<img src="landing-page.png" alt="Landing Page" width="800"/>
 
 ### Real Station Map
-![Real Station Map](real-station-map.png)
+<img src="real-station-map.png" alt="Real Station Map" width="800"/>
 
 </div>
 
@@ -198,15 +198,10 @@ chargemap/
 
 ---
 
-## License
-
-ISC License
-
----
 
 <div align="center">
 
 
-[Back to Top](#⚡-emobility-chargemap)
+[Back to Top](#emobility-chargemap)
 
 </div>
